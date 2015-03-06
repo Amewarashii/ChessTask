@@ -29,8 +29,10 @@ public class FileResultWriter implements ResultWriter {
         }
     }
 
-    public void write(StringBuilder builder) throws IOException {
-        os.write(builder.toString().getBytes());
+    public void write(String builder) throws IOException {
+        os.write(builder.getBytes());
+        os.write('\r');
+        os.write('\n');
         os.flush();
     }
 }

@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public interface ResultWriter {
 
-    void write(StringBuilder builder) throws IOException;
+    void write(String builder) throws IOException;
 
     void open(Input config) throws IOException;
 

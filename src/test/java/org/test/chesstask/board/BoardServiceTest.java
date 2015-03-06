@@ -9,10 +9,7 @@ import org.test.chesstask.app.MessagesBundle;
 import org.test.chesstask.piece.Piece;
 import org.test.chesstask.piece.impl.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -27,22 +24,13 @@ public class BoardServiceTest {
     }
 
     @Test
-    public void testPossiblePiecesSeq() {
-        Collection<Piece[]> seq = service.possiblePiecesSeq(new King(), new King(), new Rook());
-        assertEquals(3, seq.size());
-
-        seq = service.possiblePiecesSeq(new King(), new King(1), new Rook());
-        assertEquals(6, seq.size());
-    }
-
-    @Test
     public void testMovementsForPiece() {
         Board board = new Board(3, 3);
         Piece king = new King();
 
-        BoardState movements = service.movementsForPiece(king, board);
+        Map<Cell, Collection<Cell>> movements = service.movementsForPiece(king, board);
 
-        assertEquals(9, movements.getState().size());
+        assertEquals(9, movements.size());
     }
 
     @Test
@@ -54,18 +42,18 @@ public class BoardServiceTest {
 
     private void testThreatFreeConfigurationsTwoKingsRook(Piece... pieces) {
         Board board = new Board(3, 3);
-        Collection<BoardState> results = service.threatFreeConfigurations(board, Arrays.asList(pieces));
+        Collection<String> results = service.threatFreeConfigurations(Arrays.asList(pieces), board);
 
         assertEquals(4, results.size());
 
-        List<Board> boards = new ArrayList<Board>();
+        List<BoardState> boards = new ArrayList<BoardState>();
 
-        boards.add(BoardBuilder.builder().board(3, 3).piece(1, 1, new King()).piece(1, 3, new King()).piece(3, 2, new Rook()).result());
-        boards.add(BoardBuilder.builder().board(3, 3).piece(1, 1, new King()).piece(3, 1, new King()).piece(2, 3, new Rook()).result());
-        boards.add(BoardBuilder.builder().board(3, 3).piece(1, 3, new King()).piece(2, 1, new Rook()).piece(3, 3, new King()).result());
-        boards.add(BoardBuilder.builder().board(3, 3).piece(1, 2, new Rook()).piece(3, 1, new King()).piece(3, 3, new King()).result());
+        boards.add(BoardBuilder.builder().board().piece(1, 1, new King()).piece(1, 3, new King()).piece(3, 2, new Rook()).result());
+        boards.add(BoardBuilder.builder().board().piece(1, 1, new King()).piece(3, 1, new King()).piece(2, 3, new Rook()).result());
+        boards.add(BoardBuilder.builder().board().piece(1, 3, new King()).piece(2, 1, new Rook()).piece(3, 3, new King()).result());
+        boards.add(BoardBuilder.builder().board().piece(1, 2, new Rook()).piece(3, 1, new King()).piece(3, 3, new King()).result());
 
-        assertBoards(pieces.length, board, boards, results);
+        assertBoards(boards, results);
     }
 
     @Test
@@ -86,38 +74,35 @@ public class BoardServiceTest {
 
     private void testThreatFreeConfigurationsTwoRooksFourKnights(Piece... pieces) {
         Board board = new Board(4, 4);
-        Collection<BoardState> results = service.threatFreeConfigurations(board, Arrays.asList(pieces));
+        Collection<String> results = service.threatFreeConfigurations(Arrays.asList(pieces), board);
 
-        List<Board> boards = new ArrayList<Board>();
+        List<BoardState> boards = new ArrayList<BoardState>();
 
-        boards.add(BoardBuilder.builder().board(4, 4).piece(1, 2, new Knight()).piece(1, 4, new Knight()).piece(2, 3, new Rook())
+        boards.add(BoardBuilder.builder().board().piece(1, 2, new Knight()).piece(1, 4, new Knight()).piece(2, 3, new Rook())
                 .piece(3, 2, new Knight()).piece(3, 4, new Knight()).piece(4, 1, new Rook()).result());
-        boards.add(BoardBuilder.builder().board(4, 4).piece(1, 2, new Knight()).piece(1, 4, new Knight()).piece(2, 1, new Rook())
+        boards.add(BoardBuilder.builder().board().piece(1, 2, new Knight()).piece(1, 4, new Knight()).piece(2, 1, new Rook())
                 .piece(3, 2, new Knight()).piece(3, 4, new Knight()).piece(4, 3, new Rook()).result());
-        boards.add(BoardBuilder.builder().board(4, 4).piece(1, 1, new Rook()).piece(2, 2, new Knight()).piece(2, 4, new Knight())
+        boards.add(BoardBuilder.builder().board().piece(1, 1, new Rook()).piece(2, 2, new Knight()).piece(2, 4, new Knight())
                 .piece(3, 3, new Rook()).piece(4, 2, new Knight()).piece(4, 4, new Knight()).result());
-        boards.add(BoardBuilder.builder().board(4, 4).piece(1, 3, new Rook()).piece(2, 2, new Knight()).piece(2, 4, new Knight())
+        boards.add(BoardBuilder.builder().board().piece(1, 3, new Rook()).piece(2, 2, new Knight()).piece(2, 4, new Knight())
                 .piece(3, 1, new Rook()).piece(4, 2, new Knight()).piece(4, 4, new Knight()).result());
-        boards.add(BoardBuilder.builder().board(4, 4).piece(1, 2, new Rook()).piece(2, 1, new Knight()).piece(2, 3, new Knight())
+        boards.add(BoardBuilder.builder().board().piece(1, 2, new Rook()).piece(2, 1, new Knight()).piece(2, 3, new Knight())
                 .piece(3, 4, new Rook()).piece(4, 1, new Knight()).piece(4, 3, new Knight()).result());
-        boards.add(BoardBuilder.builder().board(4, 4).piece(1, 4, new Rook()).piece(2, 1, new Knight()).piece(2, 3, new Knight())
+        boards.add(BoardBuilder.builder().board().piece(1, 4, new Rook()).piece(2, 1, new Knight()).piece(2, 3, new Knight())
                 .piece(3, 2, new Rook()).piece(4, 1, new Knight()).piece(4, 3, new Knight()).result());
-        boards.add(BoardBuilder.builder().board(4, 4).piece(1, 1, new Knight()).piece(1, 3, new Knight()).piece(2, 4, new Rook())
+        boards.add(BoardBuilder.builder().board().piece(1, 1, new Knight()).piece(1, 3, new Knight()).piece(2, 4, new Rook())
                 .piece(3, 1, new Knight()).piece(3, 3, new Knight()).piece(4, 2, new Rook()).result());
-        boards.add(BoardBuilder.builder().board(4, 4).piece(1, 1, new Knight()).piece(1, 3, new Knight()).piece(2, 2, new Rook())
+        boards.add(BoardBuilder.builder().board().piece(1, 1, new Knight()).piece(1, 3, new Knight()).piece(2, 2, new Rook())
                 .piece(3, 1, new Knight()).piece(3, 3, new Knight()).piece(4, 4, new Rook()).result());
 
         assertEquals(8, results.size());
 
-        assertBoards(pieces.length, board, boards, results);
+        assertBoards(boards, results);
     }
 
-    private void assertBoards(int locCount, Board board, List<Board> against, Collection<BoardState> what) {
-        for (BoardState state : what) {
-            assertEquals(locCount, state.locations().size());
-            board.apply(state);
-            assertTrue(against.contains(board));
-            board.clear();
+    private void assertBoards(List<BoardState> against, Collection<String> what) {
+        for (BoardState state : against) {
+            assertTrue(what.contains(state.toString()));
         }
     }
 

@@ -2,28 +2,15 @@ package org.test.chesstask.board;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 public class BoardState {
 
-    private Map<Cell, Set<Cell>> state = new TreeMap<Cell, Set<Cell>>();
+    private Map<Cell, Collection<Cell>> state = new TreeMap<Cell, Collection<Cell>>();
 
     public BoardState() {}
 
-    public BoardState(Cell location, Set<Cell> movements) {
-        add(location, movements);
-    }
-
-    public BoardState(BoardState result) {
-        this.state.putAll(result.getState());
-    }
-
-    public Map<Cell, Set<Cell>> getState() {
-        return state;
-    }
-
-    public void add(Cell cell, Set<Cell> movements) {
+    public void add(Cell cell, Collection<Cell> movements) {
         this.state.put(cell, movements);
     }
 
@@ -36,15 +23,15 @@ public class BoardState {
     }
 
     public boolean containsMovement(Cell cell) {
-        for(Cell location : locations()) {
-            if(state.get(location).contains(cell)) {
+        for (Cell location : locations()) {
+            if (location.equals(cell) || state.get(location).contains(cell)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean intersectWith(Set<Cell> movements) {
+    public boolean intersectWith(Collection<Cell> movements) {
         for (Cell location : locations()) {
             if (movements.contains(location)) {
                 return true;
@@ -57,8 +44,8 @@ public class BoardState {
         return state.keySet();
     }
 
-    public Set<Cell> movementsFor(Cell location) {
-        return state.get(location);
+    public void remove(Cell cell) {
+        state.remove(cell);
     }
 
     @Override
@@ -74,5 +61,14 @@ public class BoardState {
     @Override
     public int hashCode() {
         return state.keySet().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder b = new StringBuilder();
+        for (Cell location : locations()) {
+            b.append(location.getX()).append(location.getY()).append(location.getPiece().id());
+        }
+        return b.toString();
     }
 }

@@ -13,9 +13,11 @@ abstract class ChessPiece implements Piece {
 
     private int color;
     private String id;
+    private int code;
 
     protected ChessPiece(PieceType type) {
         this.id = Character.toString(type.getId());
+        this.code = type.getCode();
     }
 
     protected ChessPiece(int color, PieceType type) {
@@ -36,6 +38,11 @@ abstract class ChessPiece implements Piece {
         return id;
     }
 
+    @Override
+    public int code() {
+        return code;
+    }
+
     protected abstract void fillPossibleMoves(Cell location, Board board, Collection<Cell> result);
 
     @Override
@@ -51,5 +58,10 @@ abstract class ChessPiece implements Piece {
     @Override
     public int hashCode() {
         return color + super.hashCode();
+    }
+
+    @Override
+    public int compareTo(Piece o) {
+        return code - o.code();
     }
 }

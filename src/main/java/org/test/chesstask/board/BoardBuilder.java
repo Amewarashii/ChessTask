@@ -2,9 +2,11 @@ package org.test.chesstask.board;
 
 import org.test.chesstask.piece.Piece;
 
+import java.util.ArrayList;
+
 public class BoardBuilder {
 
-    private Board board;
+    private BoardState board;
 
     private BoardBuilder() {}
 
@@ -12,17 +14,17 @@ public class BoardBuilder {
         return new BoardBuilder();
     }
 
-    public BoardBuilder board(int x, int y) {
-        this.board = new Board(x, y);
+    public BoardBuilder board() {
+        this.board = new BoardState();
         return this;
     }
 
     public BoardBuilder piece(int x, int y, Piece piece) {
-        board.locateIn(board.cell(x, y), piece);
+        board.add(new Cell(x, y, piece), new ArrayList<Cell>());
         return this;
     }
 
-    public Board result() {
+    public BoardState result() {
         return board;
     }
 }

@@ -12,6 +12,11 @@ public class Cell implements Comparable<Cell> {
         this.y = y;
     }
 
+    public Cell(int x, int y, Piece piece) {
+        this(x, y);
+        this.piece = piece;
+    }
+
     public Cell(Cell cell, Piece piece) {
         this(cell.getX(), cell.getY());
         this.piece = piece;

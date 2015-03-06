@@ -3,7 +3,7 @@ package org.test.chesstask.app;
 public class ConsoleOutputWriter implements ResultWriter {
     
     @Override
-    public void write(StringBuilder builder) {
+    public void write(String builder) {
         System.out.println(builder);
     }
 
