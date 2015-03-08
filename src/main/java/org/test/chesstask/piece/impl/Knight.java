@@ -13,10 +13,6 @@ public class Knight extends ChessPiece {
         super(KNIGHT);
     }
 
-    public Knight(int color) {
-        super(color, KNIGHT);
-    }
-
     @Override
     protected void fillPossibleMoves(Cell location, Board board, Collection<Cell> result) {
         int x, y, inc;

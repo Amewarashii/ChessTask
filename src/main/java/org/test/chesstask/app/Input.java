@@ -2,15 +2,12 @@ package org.test.chesstask.app;
 
 import org.test.chesstask.piece.Piece;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Input {
 
     private int x, y;
-    private Collection<Piece> pieces = new ArrayList<Piece>();
+    private List<Piece> pieces = new ArrayList<Piece>();
     private Map<String, Integer> piecesCount = new HashMap<String, Integer>();
 
     public void addPiece(Piece piece) {
@@ -37,7 +34,7 @@ public class Input {
         this.y = y;
     }
 
-    public Collection<Piece> getPieces() {
+    public List<Piece> getPieces() {
         return pieces;
     }
 

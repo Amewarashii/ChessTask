@@ -2,7 +2,7 @@ package org.test.chesstask.piece;
 
 public enum PieceType {
 
-    KING('K', 2), ROOK('R', 3), KNIGHT('N', 4), BISHOP('B', 5), QUEEN('Q', 6);
+    KING('K', 3), ROOK('R', 2), KNIGHT('N', 4), BISHOP('B', 1), QUEEN('Q', 0);
 
     private char id;
     private int code;

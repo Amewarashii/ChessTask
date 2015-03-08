@@ -13,10 +13,6 @@ public class King extends ChessPiece {
         super(KING);
     }
 
-    public King(int color) {
-        super(color, KING);
-    }
-
     @Override
     protected void fillPossibleMoves(Cell location, Board board, Collection<Cell> result) {
         int x, y;

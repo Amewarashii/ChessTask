@@ -1,5 +1,6 @@
 package org.test.chesstask.board;
 
+import org.test.chesstask.app.Input;
 import org.test.chesstask.piece.Piece;
 
 import java.util.*;
@@ -7,61 +8,67 @@ import java.util.*;
 public class BoardService {
 
     public Map<Cell, Collection<Cell>> movementsForPiece(Piece piece, Board board) {
-        Map<Cell, Collection<Cell>> result = new TreeMap<Cell, Collection<Cell>>();
-        for (int i = 1; i < board.upperX(); i++) {
-            for (Cell cell : board.cells(i)) {
-                result.put(new Cell(cell, piece), piece.possibleMoves(cell, board));
-            }
+        Map<Cell, Collection<Cell>> result = new HashMap<Cell, Collection<Cell>>();
+        for (Cell cell : board.cells()) {
+            result.put(cell, piece.possibleMoves(cell, board));
         }
         return result;
     }
 
-    public Map<Piece, Map<Cell, Collection<Cell>>> movementsForPiece(Collection<Piece> pieces, Board board) {
-        Map<Piece, Map<Cell, Collection<Cell>>> result = new TreeMap<Piece, Map<Cell, Collection<Cell>>>();
-        for (Piece piece : pieces) {
-            result.put(piece, movementsForPiece(piece, board));
-        }
-        return result;
-    }
-
-    public Collection<String> threatFreeConfigurations(Collection<Piece> pieces, Board board) {
-        Set<String> result = new HashSet<String>();
-
-        Map<Piece, Map<Cell, Collection<Cell>>> piecesMovements = movementsForPiece(pieces, board);
-
-        Queue<Map<Cell, Collection<Cell>>> queue = new LinkedList<Map<Cell, Collection<Cell>>>();
-        for (Piece piece : pieces) {
-            queue.add(piecesMovements.get(piece));
-        }
-
+    public long threatFreeConfigurations(Input config, BoardServiceListener listener) {
         long s1 = System.currentTimeMillis();
 
-        merge2(new BoardState(), queue, result);
+        Board board = new Board(config.getX(), config.getY());
+        List<Piece> pieces = config.getPieces();
 
-        System.out.println(result.size());
-        System.out.println("mem (M) " + ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024));
-        System.out.println("time (s): " + (((double) System.currentTimeMillis() - (double) s1) / 1000));
+        Collections.sort(pieces);
 
-        return result;
-    }
-
-
-
-    private void merge2(BoardState state, Queue<Map<Cell, Collection<Cell>>> movementsQueue, Collection<String> result) {
-        Map<Cell, Collection<Cell>> movements = movementsQueue.poll();
-        if (movements == null) {
-            result.add(state.toString());
-            return;
-        }
-        for (Cell location : movements.keySet()) {
-            Collection<Cell> cellMovements = movements.get(location);
-            if (state.contains(location) || state.intersectWith(cellMovements)) {
+        Map<Integer, Map<Cell, Collection<Cell>>> movements = new HashMap<Integer, Map<Cell, Collection<Cell>>>();
+        for (Piece piece : pieces) {
+            if (movements.containsKey(piece.code())) {
                 continue;
             }
-            state.add(location, cellMovements);
-            merge2(state, movementsQueue, result);
-            state.remove(location);
+            movements.put(piece.code(), movementsForPiece(piece, board));
         }
-        movementsQueue.add(movements);
+
+        BoardState state = new BoardState(pieces.size());
+
+        merge2(state, board.cells(), pieces, movements, listener);
+
+        System.out.println("time (s): " + (((double) System.currentTimeMillis() - (double) s1) / 1000));
+
+        return state.getConfigCount();
+    }
+
+    private void merge2(BoardState state, Collection<Cell> cells, List<Piece> pieces, Map<Integer, Map<Cell, Collection<Cell>>> movementsMap, BoardServiceListener listener) {
+        int depth = state.getDepth();
+        Piece piece = pieces.get(depth);
+        Map<Cell, Collection<Cell>> movements = movementsMap.get(piece.code());
+
+        for (Cell cell : cells) {
+            if (state.isBeforeLast(cell)) {
+                continue;
+            }
+            Collection<Cell> cellMovements = movements.get(cell);
+            if (state.overlap(cell, cellMovements)) {
+                continue;
+            }
+            state.add(piece, cell, cellMovements);
+            state.increaseDepth();
+            if (depth == pieces.size() - 1) {
+                state.increaseConfigCount();
+                if (listener != null) {
+                    listener.onItem(state);
+                }
+            } else {
+                List<Cell> next = new ArrayList<Cell>(cells);
+                next.removeAll(cellMovements);
+                if (pieces.get(state.getDepth()).code() == piece.code()) {
+                    state.putLast(cell);
+                }
+                merge2(state, next, pieces, movementsMap, listener);
+            }
+            state.decreaseDepth();
+        }
     }
 }

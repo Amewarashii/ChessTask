@@ -13,10 +13,6 @@ public class Bishop extends ChessPiece {
         super(BISHOP);
     }
 
-    public Bishop(int color) {
-        super(color, BISHOP);
-    }
-
     @Override
     protected void fillPossibleMoves(Cell location, Board board, Collection<Cell> result) {
         int inc, y;

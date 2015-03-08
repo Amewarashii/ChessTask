@@ -16,10 +16,6 @@ public class Queen extends ChessPiece {
         super(QUEEN);
     }
 
-    public Queen(int color) {
-        super(color, QUEEN);
-    }
-
     @Override
     protected void fillPossibleMoves(Cell location, Board board, Collection<Cell> result) {
         for(Piece piece : providers) {

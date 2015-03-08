@@ -1,5 +1,6 @@
 package org.test.chesstask.app;
 
+import org.test.chesstask.board.BoardService;
 import org.test.chesstask.piece.Piece;
 import org.test.chesstask.piece.PieceType;
 import org.test.chesstask.piece.impl.*;
@@ -11,7 +12,27 @@ public class ChessTaskAppExecutor {
     public static void main(String... args) {
         MessagesBundle messages = new MessagesBundle();
         messages.load();
+        Input config;
+        if(args.length == 1 && args[0].equals("-default")) {
+            config = new Input();
+            config.setX(7);
+            config.setY(7);
+            config.addPiece(new Queen());
+            config.addPiece(new Queen());
+            config.addPiece(new King());
+            config.addPiece(new King());
+            config.addPiece(new Bishop());
+            config.addPiece(new Bishop());
+            config.addPiece(new Knight());
+        } else {
+            config = interact(messages);
+        }
 
+        System.out.println(messages.getProcessingMsg(config.toString()));
+        System.out.println(messages.getResultMsg(new BoardService().threatFreeConfigurations(config, null), config.toString()));
+    }
+
+    private static Input interact(MessagesBundle messages) {
         Input config = new Input();
         Scanner inputReader = new Scanner(System.in);
 
@@ -41,9 +62,7 @@ public class ChessTaskAppExecutor {
             System.out.println(messages.getInviteMorePieceMsg());
             enough = inputReader.nextLine();
         }
-
-        System.out.println(messages.getProcessingMsg(config.toString()));
-        System.out.println(messages.getResultMsg(new ChessTaskApp(messages).run(config), config.toString()));
+        return config;
     }
 
     private static int integerInput(String message, MessagesBundle messages, Scanner inputReader) {

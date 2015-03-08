@@ -11,7 +11,6 @@ import java.util.Set;
 
 abstract class ChessPiece implements Piece {
 
-    private int color;
     private String id;
     private int code;
 
@@ -20,16 +19,11 @@ abstract class ChessPiece implements Piece {
         this.code = type.getCode();
     }
 
-    protected ChessPiece(int color, PieceType type) {
-        this(type);
-        this.color = color;
-    }
-
     @Override
-    public Set<Cell> possibleMoves(Cell location, Board board) {
+    public Collection<Cell> possibleMoves(Cell location, Board board) {
         Set<Cell> result = new HashSet<Cell>();
         fillPossibleMoves(location, board, result);
-        result.remove(location);
+        result.add(location);
         return result;
     }
 
@@ -44,21 +38,6 @@ abstract class ChessPiece implements Piece {
     }
 
     protected abstract void fillPossibleMoves(Cell location, Board board, Collection<Cell> result);
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ChessPiece that = (ChessPiece) o;
-
-        return color == that.color;
-    }
-
-    @Override
-    public int hashCode() {
-        return color + super.hashCode();
-    }
 
     @Override
     public int compareTo(Piece o) {

@@ -3,11 +3,11 @@ package org.test.chesstask.piece;
 import org.test.chesstask.board.Board;
 import org.test.chesstask.board.Cell;
 
-import java.util.Set;
+import java.util.Collection;
 
 public interface Piece extends Comparable<Piece> {
 
-    Set<Cell> possibleMoves(Cell location, Board board);
+    Collection<Cell> possibleMoves(Cell location, Board board);
 
     String id();
 

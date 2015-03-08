@@ -1,73 +1,72 @@
 package org.test.chesstask.board;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
+import org.test.chesstask.piece.Piece;
+
+import java.util.*;
 
 public class BoardState {
 
-    private Map<Cell, Collection<Cell>> state = new TreeMap<Cell, Collection<Cell>>();
+    private int depth;
+    private Cell[] last, locations;
+    private long configCount;
+    private Collection<Cell>[] movements;
+    private Piece[] pieces;
 
-    public BoardState() {}
-
-    public void add(Cell cell, Collection<Cell> movements) {
-        this.state.put(cell, movements);
+    public BoardState(int pieces) {
+        last = new Cell[pieces];
+        locations = new Cell[pieces];
+        movements = new Collection[pieces];
+        this.pieces = new Piece[pieces];
     }
 
-    public boolean contains(Cell cell) {
-        return containsLocation(cell) || containsMovement(cell);
+    public long getConfigCount() {
+        return configCount;
     }
 
-    public boolean containsLocation(Cell cell) {
-        return locations().contains(cell);
+    public void increaseConfigCount() {
+        configCount++;
     }
 
-    public boolean containsMovement(Cell cell) {
-        for (Cell location : locations()) {
-            if (location.equals(cell) || state.get(location).contains(cell)) {
+    public int getDepth() {
+        return depth;
+    }
+
+    public void increaseDepth() {
+        depth++;
+    }
+
+    public void decreaseDepth() {
+        depth--;
+    }
+
+    public boolean isBeforeLast(Cell cell) {
+        return last[depth] != null && cell.compareTo(last[depth]) < 0;
+    }
+
+    public void putLast(Cell cell) {
+        last[depth] = cell;
+    }
+
+    public void add(Piece piece, Cell cell, Collection<Cell> movements) {
+        this.locations[depth] = cell;
+        this.movements[depth] = movements;
+        this.pieces[depth] = piece;
+    }
+
+    public boolean overlap(Cell location, Collection<Cell> movements) {
+        for(int i = 0; i < depth; i++) {
+            if(movements.contains(locations[i]) || this.movements[i].contains(location)) {
                 return true;
             }
         }
         return false;
-    }
-
-    public boolean intersectWith(Collection<Cell> movements) {
-        for (Cell location : locations()) {
-            if (movements.contains(location)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Collection<Cell> locations() {
-        return state.keySet();
-    }
-
-    public void remove(Cell cell) {
-        state.remove(cell);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        BoardState that = (BoardState) o;
-
-        return state.keySet().equals(that.state.keySet());
-    }
-
-    @Override
-    public int hashCode() {
-        return state.keySet().hashCode();
     }
 
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
-        for (Cell location : locations()) {
-            b.append(location.getX()).append(location.getY()).append(location.getPiece().id());
+        for (int i = 0; i < depth; i++) {
+            b.append(locations[i].getX()).append(locations[i].getY()).append(pieces[i].id());
         }
         return b.toString();
     }

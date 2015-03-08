@@ -13,10 +13,6 @@ public class Rook extends ChessPiece {
         super(ROOK);
     }
 
-    public Rook(int color) {
-        super(color, ROOK);
-    }
-
     @Override
     protected void fillPossibleMoves(Cell location, Board board, Collection<Cell> result) {
         result.addAll(board.cells(location.getX()));

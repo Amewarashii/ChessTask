@@ -39,16 +39,8 @@ public class MessagesBundle {
         return getMessage("processing.msg", input);
     }
 
-    public String getResultMsg(Integer count, String input) {
+    public String getResultMsg(Long count, String input) {
         return getMessage("result.msg", count, input);
-    }
-
-    public String getUnableCreateFileErr(String input) {
-        return getMessage("err.unable.create.file.msg", input);
-    }
-
-    public String getUnableWriteBoardsErr(String input) {
-        return getMessage("err.unable.write.boards.msg", input);
     }
 
     public String getMessage(String key, Object... input) {

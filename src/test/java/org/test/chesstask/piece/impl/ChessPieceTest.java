@@ -5,9 +5,7 @@ import org.test.chesstask.board.Board;
 import org.test.chesstask.board.Cell;
 import org.test.chesstask.piece.Piece;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -68,8 +66,12 @@ public class ChessPieceTest {
 
     protected void testPossibleMoves(int x, int y, Board board, Piece piece, Cell... movesToCheck) {
         Cell location = board.cell(x, y);
-        Set<Cell> moves = piece.possibleMoves(location, board);
-        assertEquals(movesToCheck.length, moves.size());
-        assertTrue(moves.equals(new HashSet<Cell>(Arrays.asList(movesToCheck))));
+        List<Cell> movesToCheckList = new ArrayList<Cell>(Arrays.asList(movesToCheck));
+        movesToCheckList.add(location);
+        Collections.sort(movesToCheckList);
+        List<Cell> moves = new ArrayList<Cell>(piece.possibleMoves(location, board));
+        Collections.sort(moves);
+        assertEquals(movesToCheckList.size(), moves.size());
+        assertTrue(moves.equals(movesToCheckList));
     }
 }

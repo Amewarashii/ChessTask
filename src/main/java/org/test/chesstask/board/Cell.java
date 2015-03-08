@@ -1,25 +1,12 @@
 package org.test.chesstask.board;
 
-import org.test.chesstask.piece.Piece;
-
 public class Cell implements Comparable<Cell> {
 
     private int x, y;
-    private Piece piece;
 
     public Cell(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    public Cell(int x, int y, Piece piece) {
-        this(x, y);
-        this.piece = piece;
-    }
-
-    public Cell(Cell cell, Piece piece) {
-        this(cell.getX(), cell.getY());
-        this.piece = piece;
     }
 
     public int getX() {
@@ -28,10 +15,6 @@ public class Cell implements Comparable<Cell> {
 
     public int getY() {
         return y;
-    }
-
-    public Piece getPiece() {
-        return piece;
     }
 
     @Override
@@ -58,5 +41,10 @@ public class Cell implements Comparable<Cell> {
             result = y - o.y;
         }
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return x + "" + y;
     }
 }
